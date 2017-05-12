@@ -209,6 +209,9 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                 if (mSaveUri == null) {
                     return new Result(bitmap, bitmapSampled.sampleSize);
                 } else {
+
+                    bitmap = CropImage.toOvalBitmap(bitmap);
+
                     BitmapUtils.writeBitmapToUri(mContext, bitmap, mSaveUri, mSaveCompressFormat, mSaveCompressQuality);
                     if (bitmap != null) {
                         bitmap.recycle();

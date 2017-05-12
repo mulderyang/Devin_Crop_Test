@@ -285,7 +285,7 @@ public class CropImageOptions implements Parcelable {
 
         DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
 
-        cropShape = CropImageView.CropShape.RECTANGLE;
+        cropShape = CropImageView.CropShape.OVAL;
         snapRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm);
         touchRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, dm);
         guidelines = CropImageView.Guidelines.ON_TOUCH;
@@ -297,7 +297,7 @@ public class CropImageOptions implements Parcelable {
         maxZoom = 4;
         initialCropWindowPaddingRatio = 0.1f;
 
-        fixAspectRatio = false;
+        fixAspectRatio = true;
         aspectRatioX = 1;
         aspectRatioY = 1;
 

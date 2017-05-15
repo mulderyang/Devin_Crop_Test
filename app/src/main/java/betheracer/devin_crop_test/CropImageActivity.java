@@ -278,7 +278,7 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
             try {
                 String ext = mOptions.outputCompressFormat == Bitmap.CompressFormat.JPEG ? ".jpg" :
                         mOptions.outputCompressFormat == Bitmap.CompressFormat.PNG ? ".png" : ".webp";
-                outputUri = Uri.fromFile(File.createTempFile("cropped", ext, getCacheDir()));
+                outputUri = Uri.fromFile(File.createTempFile("cropped", ext, getFilesDir()));
             } catch (IOException e) {
                 throw new RuntimeException("Failed to create temp file for output image", e);
             }

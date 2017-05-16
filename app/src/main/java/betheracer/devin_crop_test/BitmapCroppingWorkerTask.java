@@ -16,8 +16,20 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Base64;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import java.io.ByteArrayOutputStream;
 import java.lang.ref.WeakReference;
+import java.util.Map;
 
 /**
  * Task to crop bitmap asynchronously from the UI thread.
@@ -120,6 +132,11 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
      * the quality (if applicable) to use when writing the image (0 - 100)
      */
     private final int mSaveCompressQuality;
+
+    private String encoded_Image;
+
+    //public String urlStr = "http://192.168.0.16/shop/android/store_image.php?start_debug=1&send_sess_end=1&debug_start_session=1&debug_session_id=12801&debug_port=10137&debug_host=192.168.109.1%2C127.0.0.1";
+    public String urlStr = "http://192.168.0.16/shop/android/store_image.php";
     //endregion
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Bitmap bitmap, float[] cropPoints,
@@ -190,6 +207,9 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
      */
     @Override
     protected BitmapCroppingWorkerTask.Result doInBackground(Void... params) {
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
         try {
             if (!isCancelled()) {
 
@@ -211,6 +231,10 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                 } else {
 
                     bitmap = CropImage.toOvalBitmap(bitmap);
+
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                    byte[] array = stream.toByteArray();
+                    encoded_Image = Base64.encodeToString(array, 0);
 
                     BitmapUtils.writeBitmapToUri(mContext, bitmap, mSaveUri, mSaveCompressFormat, mSaveCompressQuality);
                     if (bitmap != null) {
@@ -246,7 +270,44 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                 result.bitmap.recycle();
             }
         }
+
+        makeRequest();
     }
+
+
+    private void makeRequest() {
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        StringRequest request = new StringRequest(Request.Method.POST, urlStr,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.equals("success")) {
+
+                            Toast.makeText(mContext, "success 입니다.",
+                                    Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(mContext, "fail 입니다.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Toast.makeText(mContext, "에러 입니다.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                return super.getParams();
+            }
+        };
+        requestQueue.add(request);
+    }
+
+
 
     //region: Inner class: Result
 

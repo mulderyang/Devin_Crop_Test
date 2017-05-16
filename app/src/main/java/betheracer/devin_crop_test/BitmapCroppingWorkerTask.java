@@ -16,6 +16,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.widget.Toast;
 
@@ -135,7 +136,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     private final int mSaveCompressQuality;
 
     private String encoded_Image;
-    private String image_Name = "crop.png";
+    private String host_Number;
 
     //public String urlStr = "http://192.168.0.16/shop/android/store_image2.php?start_debug=1&send_sess_end=1&debug_start_session=1&debug_session_id=12801&debug_port=10137&debug_host=192.168.109.1%2C127.0.0.1";
     public String urlStr = "http://192.168.0.16/shop/android/store_image2.php";
@@ -165,6 +166,9 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
         mSaveCompressQuality = saveCompressQuality;
         mOrgWidth = 0;
         mOrgHeight = 0;
+
+        getMyNumber();
+
     }
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Uri uri, float[] cropPoints,
@@ -192,7 +196,22 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
         mSaveCompressFormat = saveCompressFormat;
         mSaveCompressQuality = saveCompressQuality;
         mBitmap = null;
+
+        getMyNumber();
     }
+
+
+    private void getMyNumber() {
+
+        TelephonyManager manager = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
+        host_Number = manager.getLine1Number();
+
+        if(host_Number.startsWith("+82")) {
+            host_Number = host_Number.replace("+82", "0");
+        }
+
+    }
+
 
     /**
      * The Android URI that this task is currently loading.
@@ -305,7 +324,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
             protected Map<String, String> getParams() throws AuthFailureError {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("encoded_image", encoded_Image);
-                map.put("image_name", image_Name);
+                map.put("host_number", host_Number);
 
                 return map;
             }

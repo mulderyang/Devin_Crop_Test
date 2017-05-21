@@ -370,6 +370,15 @@ public final class CropImage {
         }
     }
 
+
+    public static boolean isReadPhoneStatePermissionRequired(@NonNull Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return hasPermissionInManifest(context, "android.permission.READ_PHONE_STATE") &&
+                    context.checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED;
+        }
+        return false;
+    }
+
     /**
      * Create {@link ActivityBuilder} instance to start {@link CropImageActivity} to crop the given image.<br>
      * Result will be recieved in {@link Activity#onActivityResult(int, int, Intent)} and can be retrieved

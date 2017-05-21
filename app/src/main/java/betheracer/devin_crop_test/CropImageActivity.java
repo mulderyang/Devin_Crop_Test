@@ -247,10 +247,16 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
     /**
      * Execute crop image and save the result tou output uri.
      */
+    @SuppressLint("NewApi")
     protected void cropImage() {
         if (mOptions.noOutputImage) {
             setResult(null, null, 1);
         } else {
+
+            if (CropImage.isReadPhoneStatePermissionRequired(this)) {
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, 2345);
+            }
+
             Uri outputUri = getOutputUri();
             mCropImageView.saveCroppedImageAsync(outputUri,
                     mOptions.outputCompressFormat,
@@ -259,6 +265,9 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
                     mOptions.outputRequestHeight,
                     mOptions.outputRequestSizeOptions);
         }
+
+
+
     }
 
     /**

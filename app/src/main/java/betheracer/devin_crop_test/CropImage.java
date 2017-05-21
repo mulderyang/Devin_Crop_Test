@@ -86,6 +86,8 @@ public final class CropImage {
      */
     public static final int CAMERA_CAPTURE_PERMISSIONS_REQUEST_CODE = 2011;
 
+    public static final int READ_PHONE_STATE_PERMISSIONS_REQUEST_CODE = 2012;
+
     /**
      * The request code used to start {@link CropImageActivity} to be used on result to identify the this specific
      * request.

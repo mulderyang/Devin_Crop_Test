@@ -15,9 +15,9 @@ package betheracer.devin_crop_test;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -26,12 +26,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Built-in activity for image cropping.<br>
@@ -221,6 +221,22 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
             //The picker will not add the camera intent if permission is not available
             CropImage.startPickImageActivity(this);
         }
+
+        if (requestCode == CropImage.READ_PHONE_STATE_PERMISSIONS_REQUEST_CODE) {
+
+            TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            String host_number = manager.getLine1Number();
+            String device_ID = manager.getDeviceId();
+
+            Uri outputUri = getOutputUri(host_number);
+            mCropImageView.saveCroppedImageAsync(outputUri,
+                    mOptions.outputCompressFormat,
+                    mOptions.outputCompressQuality,
+                    mOptions.outputRequestWidth,
+                    mOptions.outputRequestHeight,
+                    mOptions.outputRequestSizeOptions);
+        }
+
     }
 
     @Override
@@ -254,16 +270,21 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
         } else {
 
             if (CropImage.isReadPhoneStatePermissionRequired(this)) {
-                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, 2345);
-            }
+                requestPermissions(new String[]{Manifest.permission.READ_PHONE_STATE}, CropImage.READ_PHONE_STATE_PERMISSIONS_REQUEST_CODE);
+            } else {
 
-            Uri outputUri = getOutputUri();
-            mCropImageView.saveCroppedImageAsync(outputUri,
-                    mOptions.outputCompressFormat,
-                    mOptions.outputCompressQuality,
-                    mOptions.outputRequestWidth,
-                    mOptions.outputRequestHeight,
-                    mOptions.outputRequestSizeOptions);
+                TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                String host_number = manager.getLine1Number();
+                String device_ID = manager.getDeviceId();
+
+                Uri outputUri = getOutputUri(host_number);
+                mCropImageView.saveCroppedImageAsync(outputUri,
+                        mOptions.outputCompressFormat,
+                        mOptions.outputCompressQuality,
+                        mOptions.outputRequestWidth,
+                        mOptions.outputRequestHeight,
+                        mOptions.outputRequestSizeOptions);
+            }
         }
 
 
@@ -281,16 +302,16 @@ public class CropImageActivity extends AppCompatActivity implements CropImageVie
      * Get Android uri to save the cropped image into.<br>
      * Use the given in options or create a temp file.
      */
-    protected Uri getOutputUri() {
+    protected Uri getOutputUri(String phoneNo) {
         Uri outputUri = mOptions.outputUri;
         if (outputUri.equals(Uri.EMPTY)) {
-            try {
-                String ext = mOptions.outputCompressFormat == Bitmap.CompressFormat.JPEG ? ".jpg" :
-                        mOptions.outputCompressFormat == Bitmap.CompressFormat.PNG ? ".png" : ".webp";
-                outputUri = Uri.fromFile(File.createTempFile("cropped", ext, getFilesDir()));
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to create temp file for output image", e);
-            }
+
+            File file = getFilesDir();
+            String fileStr = file.toString();
+            fileStr = fileStr + File.separator + phoneNo + ".png";
+
+            File file2 = new File(fileStr);
+            outputUri = Uri.fromFile(file2);
         }
         return outputUri;
     }

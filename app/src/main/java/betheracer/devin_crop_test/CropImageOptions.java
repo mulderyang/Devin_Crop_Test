@@ -285,7 +285,7 @@ public class CropImageOptions implements Parcelable {
 
         DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
 
-        cropShape = CropImageView.CropShape.OVAL;
+        cropShape = CropImageView.CropShape.RECTANGLE;
         snapRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 3, dm);
         touchRadius = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, dm);
         guidelines = CropImageView.Guidelines.ON_TOUCH;
@@ -325,8 +325,8 @@ public class CropImageOptions implements Parcelable {
         outputUri = Uri.EMPTY;
         outputCompressFormat = Bitmap.CompressFormat.PNG;
         outputCompressQuality = 90;
-        outputRequestWidth = 100;
-        outputRequestHeight = 100;
+        outputRequestWidth = 280;
+        outputRequestHeight = 280;
         outputRequestSizeOptions = CropImageView.RequestSizeOptions.RESIZE_FIT;
         noOutputImage = false;
 

@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
+                ((ImageView) findViewById(R.id.quick_start_cropped_image)).setImageResource(R.drawable.crop_image_menu_flip);
+                //((ImageView) findViewById(R.id.quick_start_cropped_image)).clearAnimation();
                 ((ImageView) findViewById(R.id.quick_start_cropped_image)).setImageURI(result.getUri());
                 Toast.makeText(this, "Cropping successful, Sample: " + result.getSampleSize(), Toast.LENGTH_LONG).show();
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {

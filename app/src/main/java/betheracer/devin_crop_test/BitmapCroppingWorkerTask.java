@@ -138,8 +138,8 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
     private String encoded_Image;
     private String host_Number;
 
-    //public String urlStr = "http://192.168.0.16/shop/android/store_image2.php?start_debug=1&send_sess_end=1&debug_start_session=1&debug_session_id=12801&debug_port=10137&debug_host=192.168.109.1%2C127.0.0.1";
-    public String urlStr = "http://192.168.0.16/shop/android/store_image2.php";
+    //public String urlStr = "http://192.168.0.29/shop/android/store_image.php?start_debug=1&send_sess_end=1&debug_start_session=1&debug_session_id=12801&debug_port=10137&debug_host=192.168.109.1%2C127.0.0.1";
+    public String urlStr = "http://192.168.0.29/shop/android/store_image.php";
     //endregion
 
     BitmapCroppingWorkerTask(CropImageView cropImageView, Bitmap bitmap, float[] cropPoints,
@@ -251,7 +251,7 @@ final class BitmapCroppingWorkerTask extends AsyncTask<Void, Void, BitmapCroppin
                     return new Result(bitmap, bitmapSampled.sampleSize);
                 } else {
 
-                    bitmap = CropImage.toOvalBitmap(bitmap);
+                    //bitmap = CropImage.toOvalBitmap(bitmap);
 
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                     byte[] array = stream.toByteArray();
